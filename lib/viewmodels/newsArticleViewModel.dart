@@ -3,7 +3,7 @@ import 'package:news_app/models/newsArticle.dart';
 class NewsArticleViewModel {
   NewsArticle _newsArticle;
 
-  NewsArticleViewModel({NewsArticle newsArticle}) : _newsArticle = newsArticle;
+  NewsArticleViewModel({NewsArticle article}) : _newsArticle = article;
 
   String get title{
     return _newsArticle.title;
