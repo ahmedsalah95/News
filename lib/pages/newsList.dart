@@ -8,6 +8,17 @@ class NewsList extends StatefulWidget {
   _NewsListState createState() => _NewsListState();
 }
 
+Widget _buildNews(NewsArticleListViewModel vm) {
+  switch (vm.loadingstatus) {
+    case loadingStatus.searching:
+      return CircularProgressIndicator();
+    case loadingStatus.completed:
+      return  Expanded(child: NewsArea(articles: vm.articles));
+    case  loadingStatus.empty:
+      return Text('No results found!!');
+  }
+}
+
 class _NewsListState extends State<NewsList> {
   final _controller = TextEditingController();
 
@@ -25,25 +36,37 @@ class _NewsListState extends State<NewsList> {
         appBar: AppBar(
           title: Text('أخبار مصر'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.search),
-                  ),
-                  labelText: 'ابحث هنا',
-                  suffixIcon:
-                      IconButton(icon: Icon(Icons.clear), onPressed: () {})),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Expanded(child: NewsArea(articles: vm.articles))
-          ],
+        body: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                onSubmitted: (value) {
+                  if (value.isNotEmpty) {
+                    vm.populateSearch(value);
+                  }
+                },
+                controller: _controller,
+                decoration: InputDecoration(
+                    icon: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.search),
+                    ),
+                    labelText: 'ابحث هنا',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          _controller.clear();
+                          vm.populateHeadLines();
+                        })),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              _buildNews(vm)
+            ],
+          ),
         ));
   }
 }
